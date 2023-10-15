@@ -40,8 +40,8 @@ SYSTEM_APPS = [
     'django.contrib.staticfiles',
 ]
 DEVELOPED_APPS = [
-    'apps.accounts.apps.AppConfig',
-    'apps.home.apps.AppConfig',
+    'apps.accounts.apps.AccountsConfig',
+    'apps.home.apps.HomeConfig',
 ]
 THIRD_PARTY_APPS = []
 
@@ -184,20 +184,3 @@ LOGGING = {
 
 if not DEBUG:
     CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
-    
-    import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
-
-    sentry_sdk.init(
-        dsn="https://6503b0dcbabea59925858bf42dcc3d4c@o4505626896367616.ingest.sentry.io/4506027609358336",
-        integrations=[DjangoIntegration()],
-
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production.
-        traces_sample_rate=1.0,
-
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True
-    )
