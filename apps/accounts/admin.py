@@ -3,7 +3,7 @@ from django.utils.translation import gettext as _
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
 from .forms import UserChangeForm, UserCreationForm
-from .models import User
+from .models import User, OtpCode
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
@@ -39,3 +39,7 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 admin.site.unregister(Group)
+
+@admin.register(OtpCode)
+class OtpCodeAdmin(admin.ModelAdmin):
+    list_display = ("phone_number", "code", "created",)
