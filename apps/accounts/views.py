@@ -5,6 +5,8 @@ import random
 from utils import send_otp_code
 from .models import OtpCode ,User
 from django.contrib import messages
+import datetime
+from django.utils import timezone
 
 class UserRegisterView(views.View):
     form_class = UserRegisterationForm
@@ -18,6 +20,9 @@ class UserRegisterView(views.View):
         if form.is_valid():
             cd = form.cleaned_data
             random_code = random.randint(1000, 9999)
+            old_code = OtpCode.objects.filter(phone_number = cd['phone_number'])
+            if old_code:
+                old_code[0].delete()
             send_otp_code(phone_number=cd['phone_number'], code= random_code)
             OtpCode.objects.create(phone_number= cd['phone_number'], code = random_code)
             request.session['user_registeration_info'] = {
@@ -44,11 +49,15 @@ class UserRegisterVerifyCodeView(views.View):
         if form.is_valid():
             cd  = form.cleaned_data
             if cd['code'] == code_instance.code:
-                code_instance.delete()
-                User.objects.create_user(email= user_info['email'], phone_number= user_info['phone_number'], 
-                                         full_name= user_info['full_name'], password= user_info['password'])
-                messages.success(request, 'You are registered.', 'success')
-                return redirect('home:home')
+                if code_instance.created + timezone.timedelta(minutes=2) < timezone.now() :
+                    messages.error(request, 'Code was expired', 'danger')
+                    return redirect('accounts:register')
+                else:
+                    code_instance.delete()
+                    User.objects.create_user(email= user_info['email'], phone_number= user_info['phone_number'], 
+                                            full_name= user_info['full_name'], password= user_info['password'])
+                    messages.success(request, 'You are registered.', 'success')
+                    return redirect('home:home')
             else:
                 messages.error(request, 'Wrong code', 'danger')
                 return redirect('accounts:verify_code')
