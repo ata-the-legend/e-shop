@@ -43,7 +43,9 @@ DEVELOPED_APPS = [
     'apps.accounts.apps.AccountsConfig',
     'apps.home.apps.HomeConfig',
 ]
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    'storages',
+]
 
 DEV_TOOLS = [] 
 
@@ -185,3 +187,22 @@ LOGGING = {
 
 if not DEBUG:
     CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
+
+
+# ARVAN CLOUD STORAGE
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "access_key": os.environ.get("AWS_ACCESS_KEY_ID"),
+            "secret_key": os.environ.get("AWS_SECRET_ACCESS_KEY"),
+            "bucket_name": os.environ.get("AWS_STORAGE_BUCKET_NAME"),
+            "endpoint_url": os.environ.get("AWS_S3_ENDPOINT_URL"),
+            "file_overwrite": os.environ.get("AWS_S3_FILE_OVERWRITE") != 'False',
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+AWS_SERVICE_NAME = os.environ.get("AWS_SERVICE_NAME"),
