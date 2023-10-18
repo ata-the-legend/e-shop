@@ -7,7 +7,7 @@ from .models import OtpCode ,User
 from django.contrib import messages
 import datetime
 from django.utils import timezone
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 class UserRegisterView(views.View):
     form_class = UserRegisterationForm
@@ -120,4 +120,10 @@ class UserLoginVerifyCodeView(views.View):
             else:
                 messages.error(request, 'Wrong code', 'danger')
                 return redirect('accounts:verify_code')
+        return redirect('home:home')
+    
+class UserLogoutView(views.View):
+    def get(self, request):
+        logout(request)
+        messages.success(request, 'You are loged out')
         return redirect('home:home')
