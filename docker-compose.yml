@@ -12,6 +12,7 @@ services:
       - ./.env.dev
     depends_on:
       - db
+      - broker
   
   db:
     image: postgres:15-alpine3.18
@@ -22,6 +23,20 @@ services:
       - POSTGRES_PASSWORD=1234e_shop
       - POSTGRES_DB=e_shop_dev
 
+  broker:
+    image: rabbitmq:3.12-management
+    ports:
+      - 15672:15672
+    volumes:
+      - e_shop_rabbitmq_data:/var/lib/rabbitmq
+      - e_shop_raabbitmq_log:/var/log/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+
 volumes:
   e_shop_postgres_data:
+  e_shop_rabbitmq_data:
+  e_shop_raabbitmq_log:
 
