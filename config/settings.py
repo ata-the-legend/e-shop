@@ -205,4 +205,4 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
-AWS_SERVICE_NAME = os.environ.get("AWS_SERVICE_NAME"),
+AWS_SERVICE_NAME = os.environ.get("AWS_SERVICE_NAME")

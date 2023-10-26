@@ -3,6 +3,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.shortcuts import render
 from .models import Product
+from .tasks import all_bucket_objects_task
 
 
 class HomeView(ListView):
@@ -15,3 +16,9 @@ class ProductDetailView(DetailView):
     template_name = "home/detail.html"
     
 
+class BucketHome(views.View):
+    template_name = "home/bucket.html"
+
+    def get(self, request):
+        objects = all_bucket_objects_task()
+        return render(request, self.template_name, {'objects': objects})
