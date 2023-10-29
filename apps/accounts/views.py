@@ -8,6 +8,7 @@ from django.contrib import messages
 import datetime
 from django.utils import timezone
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class UserRegisterView(views.View):
     form_class = UserRegisterationForm
@@ -122,7 +123,7 @@ class UserLoginVerifyCodeView(views.View):
                 return redirect('accounts:verify_code')
         return redirect('home:home')
     
-class UserLogoutView(views.View):
+class UserLogoutView(LoginRequiredMixin, views.View):
     def get(self, request):
         logout(request)
         messages.success(request, 'You are loged out')

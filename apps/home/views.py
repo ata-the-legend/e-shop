@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from .models import Product
 from . import tasks
 from django.contrib import messages
+from utils import IsAdminUserMixin
 
 
 class HomeView(ListView):
@@ -17,7 +18,7 @@ class ProductDetailView(DetailView):
     template_name = "home/detail.html"
     
 
-class BucketHome(views.View):
+class BucketHome(IsAdminUserMixin, views.View):
     template_name = "home/bucket.html"
 
     def get(self, request):
@@ -25,13 +26,13 @@ class BucketHome(views.View):
         return render(request, self.template_name, {'objects': objects})
     
 
-class DeleteBucketObjectView(views.View):
+class DeleteBucketObjectView(IsAdminUserMixin, views.View):
     def get(self, request, key):
         tasks.delete_object_task.delay(key)
         messages.info(request, 'Object will delete soon...', 'info')
         return redirect('home:bucket')
     
-class DownloadBucketObjectView(views.View):
+class DownloadBucketObjectView(IsAdminUserMixin, views.View):
     def get(self, request, key):
         tasks.download_object_task.delay(key)
         messages.info(request, 'Object is downloading...', 'info')
