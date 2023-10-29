@@ -206,3 +206,4 @@ STORAGES = {
     },
 }
 AWS_SERVICE_NAME = os.environ.get("AWS_SERVICE_NAME")
+AWS_LOCAL_STORAGE_PATH = f"{BASE_DIR}/aws/"

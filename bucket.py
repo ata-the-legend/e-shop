@@ -54,5 +54,17 @@ class Bucket:
         except ClientError as e:
             logging.error(e)
 
+    def download_object(self, object_name: str):
+        try:
+            bucket = self.s3_resource.Bucket(self.bucket_name)
+            download_path = settings.AWS_LOCAL_STORAGE_PATH + object_name
+
+            bucket.download_file(
+                object_name,
+                download_path
+            )
+            return True
+        except ClientError as e:
+            logging.error(e)
 
 bucket = Bucket()
