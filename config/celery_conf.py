@@ -13,7 +13,7 @@ celery_app.conf.update(
     result_backend = 'rpc://',
     task_serializer = 'json',
     result_serializer = 'pickle',
-    accept_content = ['json', 'pickle'],
+    # accept_content = ['json', 'pickle'],
     result_expires = timedelta(days=1),
     task_always_eager = False,
     worker_prefetch_multiplier = 4

@@ -18,7 +18,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, verbose_name=_("category"), on_delete=models.CASCADE, related_name='products')
     name = models.CharField(_("name"), max_length=200)
     description = models.TextField(_("description"))
-    image = models.ImageField(_("image"), upload_to='products/%Y/%m/%d')
+    image = models.ImageField(_("image"))#, upload_to='products-%Y-%m-%d')
     available = models.BooleanField(_("is available"), default=True)
     slug = models.SlugField(_("slug"), unique=True)
     price = models.IntegerField(_("price"))

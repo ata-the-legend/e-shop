@@ -44,10 +44,13 @@ class Bucket:
         try:
             bucket = self.s3_resource.Bucket(self.bucket_name)
             object = bucket.Object(object_name)
+            print(50*'=')
+            print(object)
 
-            response = object.delete(
-                VersionId='string',
-            )
+            response = object.delete()
+            print(50*'=')
+            print(response)
+            return True
         except ClientError as e:
             logging.error(e)
 
