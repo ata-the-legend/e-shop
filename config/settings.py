@@ -45,6 +45,7 @@ DEVELOPED_APPS = [
 ]
 THIRD_PARTY_APPS = [
     'storages',
+    'django_celery_beat',
 ]
 
 DEV_TOOLS = [] 
