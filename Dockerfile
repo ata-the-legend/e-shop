@@ -13,6 +13,15 @@ ENV PYTHONUNBUFFERED 1
 # install system dependencies
 RUN apt-get update && apt-get install -y netcat
 
+#install and config supervisor
+RUN pip install supervisor==4.2.5 
+COPY ./supervisord.conf .
+COPY ./celeryd.conf .
+COPY ./celerybeat.conf .
+RUN mkdir logs
+RUN mkdir logs/supervisord
+RUN mkdir logs/celery_logs
+
 # install dependencies
 RUN pip install --upgrade pip
 COPY ./requirements/ .

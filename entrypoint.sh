@@ -14,4 +14,9 @@ fi
 # python manage.py flush --no-input
 python manage.py migrate
 
+#superviser update
+supervisord -c ./supervisord.conf
+supervisorctl reread
+supervisorctl update
+
 exec "$@"
