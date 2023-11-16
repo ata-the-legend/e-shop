@@ -1,3 +1,4 @@
+from typing import Any
 from django import views
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -6,6 +7,7 @@ from .models import Product, Category
 from . import tasks
 from django.contrib import messages
 from utils import IsAdminUserMixin
+from apps.orders.forms import CartAddForm
 
 
 class HomeView(views.View):
@@ -21,6 +23,11 @@ class HomeView(views.View):
 class ProductDetailView(DetailView):
     model = Product
     template_name = "home/detail.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['form'] = CartAddForm()
+        return context
     
 
 class BucketHome(IsAdminUserMixin, views.View):
