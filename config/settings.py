@@ -42,6 +42,7 @@ SYSTEM_APPS = [
 DEVELOPED_APPS = [
     'apps.accounts.apps.AccountsConfig',
     'apps.home.apps.HomeConfig',
+    'apps.orders.apps.OrdersConfig',
 ]
 THIRD_PARTY_APPS = [
     'storages',
