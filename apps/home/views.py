@@ -2,16 +2,21 @@ from django import views
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.shortcuts import render, redirect
-from .models import Product
+from .models import Product, Category
 from . import tasks
 from django.contrib import messages
 from utils import IsAdminUserMixin
 
 
-class HomeView(ListView):
-    model = Product
-    queryset = Product.objects.filter(available=True)
+class HomeView(views.View):
     template_name = "home/home.html"
+
+    def get(self, request, category=None):
+        products = Product.objects.filter(available=True)
+        categories = Category.objects.filter(parent=None)
+        if category:
+            products = products.filter(category__slug= category)
+        return render(request, self.template_name, {'products': products, 'categories': categories})
 
 class ProductDetailView(DetailView):
     model = Product

@@ -3,6 +3,14 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 class Category(models.Model):
+    parent = models.ForeignKey(
+        "self", 
+        verbose_name=_("Parent"), 
+        on_delete=models.CASCADE, 
+        blank=True, 
+        null=True,
+        related_name='sub_category'
+    )
     name = models.CharField(_("name"), max_length=200)
     slug = models.SlugField(_("slug"), unique=True)
 
@@ -12,10 +20,13 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def get_absolute_url(self):
+        return reverse("home:category_filter", kwargs={"category": self.slug})
 
 class Product(models.Model):
     
-    category = models.ForeignKey(Category, verbose_name=_("category"), on_delete=models.CASCADE, related_name='products')
+    category = models.ManyToManyField(Category, verbose_name=_("category"), related_name='products')
     name = models.CharField(_("name"), max_length=200)
     description = models.TextField(_("description"))
     image = models.ImageField(_("image"))#, upload_to='products-%Y-%m-%d')
