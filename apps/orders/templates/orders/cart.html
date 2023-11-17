@@ -24,10 +24,13 @@
         </tr>
       {% endfor %}
       <tr>
-        <td>Total</td>
+        <td style="color:lime">Total</td>
         <td colspan="3"></td>
-        <td colspan="3">{{ cart.get_total_price }}</td>
+        <td colspan="3" style="color:lime">{{ cart.get_total_price }}</td>
       </tr>
     </tbody>
   </table>
+
+  <a href="{% url "orders:order_create" %}" class="btn btn-primary">Checkout</a>
+
 {% endblock content %}
