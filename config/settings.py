@@ -105,6 +105,15 @@ DATABASES = {
    }
 }
 
+# cache
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://@redis:6379",
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 
 # Password validation
