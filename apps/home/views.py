@@ -1,5 +1,6 @@
 from typing import Any
-from django import views
+from django import http, views
+from django.http.response import HttpResponse
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.shortcuts import render, redirect
@@ -8,6 +9,8 @@ from . import tasks
 from django.contrib import messages
 from utils import IsAdminUserMixin
 from apps.orders.forms import CartAddForm
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 
 class HomeView(views.View):
@@ -38,7 +41,14 @@ class BucketHome(IsAdminUserMixin, views.View):
         return render(request, self.template_name, {'objects': objects})
     
 
-class DeleteBucketObjectView(IsAdminUserMixin, views.View):
+class DeleteBucketObjectView(PermissionRequiredMixin, IsAdminUserMixin, views.View):
+    permission_required = 'accounts.delete_user'
+
+    # def dispatch(self, request, *args: Any, **kwargs: Any) -> HttpResponse:
+    #     if not request.user.has_perm('accounts.delete_user'):
+    #         raise PermissionDenied()
+    #     return super().dispatch(request, *args, **kwargs)
+    
     def get(self, request, key):
         tasks.delete_object_task.delay(key)
         messages.info(request, 'Object will delete soon...', 'info')

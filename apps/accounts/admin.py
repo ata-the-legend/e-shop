@@ -1,3 +1,4 @@
+from typing import Any
 from django.contrib import admin
 from django.utils.translation import gettext as _
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -16,6 +17,9 @@ class UserAdmin(BaseUserAdmin):
                 "fields": (
                     "is_active",
                     "is_admin",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
                 ),
             },
         ),
@@ -32,13 +36,22 @@ class UserAdmin(BaseUserAdmin):
     )
     form = UserChangeForm
     add_form = UserCreationForm
-    list_display = ("email", "full_name", "phone_number", "is_admin")
+    list_display = ("email", "full_name", "phone_number", "is_admin", "is_superuser",)
     list_filter = ("is_admin", "is_active",)
     search_fields = ("email", "full_name", "phone_number")
     ordering = ("full_name",)
-    filter_horizontal = ()
+    filter_horizontal = ("groups", "user_permissions", )
+    readonly_fields = ("last_login", )
 
-admin.site.unregister(Group)
+    def get_form(self, request: Any, obj: Any | None = ..., change: bool = ..., **kwargs: Any) -> Any:
+        form = super().get_form(request, obj, **kwargs)
+        is_superuser = request.user.is_superuser
+        if not is_superuser:
+            form.base_fields["is_superuser"].disabled = True
+            print(is_superuser)
+        return form
+
+
 
 @admin.register(OtpCode)
 class OtpCodeAdmin(admin.ModelAdmin):
