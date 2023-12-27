@@ -3,7 +3,7 @@ from .models import Product, Category, Comment
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('parent', 'name', 'slug')
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):

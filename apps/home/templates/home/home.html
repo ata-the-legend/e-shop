@@ -24,7 +24,7 @@
     </br></br>
     <h3>Hello</h3>    
     {% for product in products %}
-        <div class="card" style="width: 18rem; display: inline-block;">
+        <div class="card" style="width: 17rem; display: inline-block;">
             <img src="{{ product.image.url }}" class="card-img-top" alt="...">
             <div class="card-body">
             <a class="card-title" href="{{ product.get_absolute_url }}">{{product.name}}</a>
