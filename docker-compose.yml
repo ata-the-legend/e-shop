@@ -14,6 +14,8 @@ services:
       - db
       - broker
       - redis
+      - es01
+      - es02
   
   db:
     image: postgres:15-alpine3.18
@@ -37,13 +39,74 @@ services:
 
   redis:
     image: redis:7.2.3
-    restart: always
+    # restart: always
     ports:
       - 6379:6379
+
+  es01:
+      image: "docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2"
+      ports:
+        - "9200:9200"
+        - "9300:9300"
+      environment:
+        node.name: es01
+        discovery.seed_hosts: es01,es02
+        cluster.initial_master_nodes: es01,es02
+        cluster.name: shop_cluster
+        bootstrap.memory_lock: "true"
+        ES_JAVA_OPTS: -Xms256m -Xmx256m
+      volumes:
+        - "es-data-es01:/usr/share/elasticsearch/data"
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+      healthcheck:
+        test: ["CMD-SHELL", "curl http://localhost:9200"]
+        interval: 10s
+        timeout: 10s
+        retries: 120
+  es02:
+    image: "docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2"
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    environment:
+      node.name: es02
+      discovery.seed_hosts: es01,es02
+      cluster.initial_master_nodes: es01,es02
+      cluster.name: shop_cluster
+      bootstrap.memory_lock: "true"
+      ES_JAVA_OPTS: -Xms256m -Xmx256m
+    volumes:
+      - "es-data-es02:/usr/share/elasticsearch/data"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:9200"]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+  
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:7.10.2
+    depends_on:
+      es01:
+        condition: service_healthy
+      es02:
+        condition: service_healthy
+    ports:
+      - "5601:5601"
+    environment:
+      - 'ELASTICSEARCH_HOSTS=["http://es01:9200","http://es02:9200"]'
 
 
 volumes:
   e_shop_postgres_data:
   e_shop_rabbitmq_data:
   e_shop_raabbitmq_log:
+  es-data-es01:
+  es-data-es02:
 

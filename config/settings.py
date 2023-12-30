@@ -10,6 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+
+import django
+from django.utils.encoding import force_str
+django.utils.encoding.force_text = force_str
+
+
 from pathlib import Path
 import os
 
@@ -47,6 +53,7 @@ DEVELOPED_APPS = [
 THIRD_PARTY_APPS = [
     'storages',
     'django_celery_beat',
+    'django_elasticsearch_dsl',
 ]
 
 DEV_TOOLS = [] 
@@ -115,6 +122,12 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
+#elastic
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': ["http://es01:9200","http://es02:9200"],
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
