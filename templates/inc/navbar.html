@@ -13,5 +13,11 @@
             {% endif %}
             <a class="nav-link active" href="{% url "orders:cart" %}">Cart({{ cart|length }})</a>
         </div>
+        <form class="d-flex" role="search" action="{% url "home:home" %}" method='post'>
+            {% csrf_token %}
+            <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+    
     </div>
 </nav>

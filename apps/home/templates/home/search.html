@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table class="table table-dark table-striped">  
+        {% for hit in search_results %}
+            <tbody>
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td><a href="{% url "home:product_detail" hit.slug %}">{{hit.name}}</a></td>
+            </tr>
+            </tbody>
+        {% endfor %}
+    </table>
+{% endblock content %}

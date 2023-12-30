@@ -11,10 +11,15 @@ from utils import IsAdminUserMixin
 from apps.orders.forms import CartAddForm
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from .forms import SearchForm
+from .documents import ProductDocument
+from elasticsearch_dsl import MultiSearch
+from django_elasticsearch_dsl.search import Search
 
 
 class HomeView(views.View):
     template_name = "home/home.html"
+    form_class = SearchForm
 
     def get(self, request, category=None):
         products = Product.objects.filter(available=True)
@@ -22,6 +27,22 @@ class HomeView(views.View):
         if category:
             products = products.filter(category__slug= category)
         return render(request, self.template_name, {'products': products, 'categories': categories})
+    
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            search_results = ProductDocument.search().query(
+                "multi_match", 
+                query=cd['search'], 
+                fields=['name', 'description', 'category.name']
+            )
+            response = search_results.execute()
+            product_ids = [hit.meta.id for hit in response.hits]
+            products = Product.objects.filter(available=True, id__in=product_ids)
+            categories = Category.objects.filter(parent=None)
+            return render(request, self.template_name, {'products': products, 'categories': categories})
 
 class ProductDetailView(DetailView):
     model = Product
@@ -59,3 +80,19 @@ class DownloadBucketObjectView(IsAdminUserMixin, views.View):
         tasks.download_object_task.delay(key)
         messages.info(request, 'Object is downloading...', 'info')
         return redirect('home:bucket')
+    
+
+class SearchView(views.View):
+    form_class = SearchForm
+    template_name = 'home/search.html'
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            search_results = ProductDocument.search().query(
+                "multi_match", 
+                query=cd['search'], 
+                fields=['name', 'description', 'category.name']
+            )
+            return render(request, self.template_name, {'search_results': search_results})
